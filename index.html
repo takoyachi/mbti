@@ -522,6 +522,25 @@
         link.setAttribute("download", `Data_Siswa_MBTI_${new Date().toLocaleDateString('id-ID')}.csv`); document.body.appendChild(link); link.click(); document.body.removeChild(link);
     }
 
+function toggleLoader(show, text = "Memproses...") {
+    const overlay = document.getElementById("loading-overlay");
+    const loadingText = document.getElementById("loading-text");
+
+    if (loadingText) {
+        loadingText.textContent = text;
+    }
+
+    if (overlay) {
+        if (show) {
+            overlay.classList.remove("hidden");
+            overlay.classList.add("flex");
+        } else {
+            overlay.classList.add("hidden");
+            overlay.classList.remove("flex");
+        }
+    }
+}
+    
     window.onload = function() { 
         loadLocalRecords();
         lucide.createIcons(); 
