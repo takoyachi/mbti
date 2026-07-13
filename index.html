@@ -274,25 +274,73 @@
         renderQuestion();
     }
 
-    function renderQuestion() {
-        const q = questions[currentQ];
-        document.getElementById('quiz-q-text').textContent = (currentQ + 1) + '. ' + q.q;
-        const pct = Math.round((currentQ / 24) * 100);
-        document.getElementById('quiz-progress-bar').style.width = pct + '%';
-        document.getElementById('quiz-pct').textContent = pct + '%';
-        document.getElementById('quiz-progress-text').textContent = `Pertanyaan ${currentQ + 1} dari 24`;
+    function renderDashboardData() {
+        const data = allRecords;
+        document.getElementById('dash-total').textContent = data.length;
+        let extroCount = 0; const typeCounts = {};
+        Object.keys(typeData).forEach(k => typeCounts[k] = 0);
 
-        const opts = document.getElementById('quiz-options'); opts.innerHTML = '';
-        [{label: q.a, val: 'a'}, {label: q.b, val: 'b'}].forEach(o => {
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'w-full text-left px-5 py-4 rounded-xl border-2 transition font-medium text-gray-700 ' + 
-                            (answers[currentQ] === o.val ? 'border-rose-600 bg-rose-50 text-rose-700 font-semibold' : 'border-gray-200 hover:border-rose-300 hover:bg-rose-50/30');
-            btn.textContent = o.label;
-            btn.onclick = () => { answers[currentQ] = o.val; setTimeout(() => { if (currentQ < 23) { currentQ++; renderQuestion(); } else { renderQuestion(); } }, 200); };
-            opts.appendChild(btn);
+        data.forEach(d => {
+            if(d.tipe_kepribadian) {
+                if(d.tipe_kepribadian[0] === 'E') extroCount++;
+                typeCounts[d.tipe_kepribadian]++;
+            }
         });
 
+        document.getElementById('dash-extro').textContent = data.length ? Math.round((extroCount / data.length) * 100) + '%' : '0%';
+        document.getElementById('dash-intro').textContent = data.length ? Math.round(((data.length - extroCount) / data.length) * 100) + '%' : '0%';
+
+        const chart = document.getElementById('dash-chart'); chart.innerHTML = '';
+        const max = Math.max(...Object.values(typeCounts), 1);
+        Object.entries(typeCounts).sort((a,b) => b[1] - a[1]).forEach(([t, c]) => {
+            if (c > 0 || data.length === 0) {
+                chart.innerHTML += `
+                    <div class="flex items-center gap-2">
+                        <span class="w-14 text-xs font-bold text-gray-700">${t}</span>
+                        <div class="flex-1 bg-gray-100 rounded-full h-5 overflow-hidden border border-gray-200"><div class="h-full bg-gradient-to-r from-rose-500 to-orange-500 rounded-full" style="width:${data.length ? Math.round((c / max) * 100) : 0}%"></div></div>
+                        <span class="text-xs w-12 text-right font-semibold text-gray-600">${c} siswa</span>
+                    </div>`;
+            }
+        });
+
+        const tbody = document.getElementById('dash-table'); tbody.innerHTML = '';
+        if(data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-gray-400 italic">Belum ada respon siswa secara online.</td></tr>`;
+            return;
+        }
+
+        // PERBAIKAN STRUKTUR PEMBACAAN DATA DARI API GOOGLE SHEETS
+        data.forEach(d => {
+            const namaSiswa = d.nama || '-';
+            const kelasSiswa = d.kelas || '-';
+            const noAbsen = d.nomor_absen || '-';
+            const jk = d.jenis_kelamin || '-';
+            const mbti = d.tipe_kepribadian || '-';
+            const hobiSiswa = d.hobi || '-';
+            const citaSiswa = d.cita_cita || '-';
+            const tgl = d.tanggal_pengisian || '-';
+
+            const tr = document.createElement('tr');
+            tr.className = 'border-t border-gray-200 hover:bg-slate-50 transition';
+            tr.innerHTML = `
+                <td class="px-4 py-3 font-semibold text-gray-800">${namaSiswa}</td>
+                <td class="px-4 py-3">${kelasSiswa}</td>
+                <td class="px-4 py-3 text-center">${noAbsen}</td>
+                <td class="px-4 py-3">${jk}</td>
+                <td class="px-4 py-3">
+                    <span class="bg-rose-100 text-rose-700 px-2 py-0.5 rounded-md font-bold text-xs border border-rose-200">
+                        ${mbti}
+                    </span>
+                </td>
+                <td class="px-4 py-3 text-xs text-gray-500">
+                    <div><b>Hobi:</b> ${hobiSiswa}</div>
+                    <div><b>Cita:</b> ${citaSiswa}</div>
+                </td>
+                <td class="px-4 py-3 text-xs text-gray-400">${tgl}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
         document.getElementById('btn-prev').disabled = currentQ === 0;
         const nextBtn = document.getElementById('btn-next');
         if (currentQ === 23) { nextBtn.innerHTML = 'Kirim & Lihat Hasil <i data-lucide="send" class="w-4 h-4 inline"></i>'; nextBtn.disabled = answers[currentQ] === null; }
