@@ -743,29 +743,64 @@
 
 
     function renderDashboardData() {
+        // PROSES PENYARINGAN (FILTER): Menghilangkan data duplikat berdasarkan Nama, Kelas, dan Absen
+        const uniqueData = [];
+        const seen = new Set();
 
-        const data = allRecords;
-
-        document.getElementById('dash-total').textContent = data.length;
-
-        let extroCount = 0; const typeCounts = {};
-
-        Object.keys(typeData).forEach(k => typeCounts[k] = 0);
-
-
-
-        data.forEach(d => {
-
-            if(d.tipe_kepribadian) {
-
-                if(d.tipe_kepribadian[0] === 'E') extroCount++;
-
-                typeCounts[d.tipe_kepribadian]++;
-
+        allRecords.forEach(d => {
+            // Membuat kunci unik untuk setiap siswa
+            const key = `${(d.nama || '').trim().toLowerCase()}_${(d.kelas || '').trim().toLowerCase()}_${(d.nomor_absen || '')}`;
+            if (!seen.has(key)) {
+                seen.add(key);
+                uniqueData.push(d);
             }
-
         });
 
+        // Gunakan data unik untuk kalkulasi dan tampilan
+        const data = uniqueData;
+        
+        document.getElementById('dash-total').textContent = data.length;
+        let extroCount = 0; const typeCounts = {};
+        Object.keys(typeData).forEach(k => typeCounts[k] = 0);
+
+        data.forEach(d => {
+            if(d.tipe_kepribadian) {
+                if(d.tipe_kepribadian[0] === 'E') extroCount++;
+                typeCounts[d.tipe_kepribadian]++;
+            }
+        });
+
+        document.getElementById('dash-extro').textContent = data.length ? Math.round((extroCount / data.length) * 100) + '%' : '0%';
+        document.getElementById('dash-intro').textContent = data.length ? Math.round(((data.length - extroCount) / data.length) * 100) + '%' : '0%';
+
+        const chart = document.getElementById('dash-chart'); chart.innerHTML = '';
+        const max = Math.max(...Object.values(typeCounts), 1);
+        Object.entries(typeCounts).sort((a,b) => b[1] - a[1]).forEach(([t, c]) => {
+            if (c > 0 || data.length === 0) {
+                chart.innerHTML += `
+                    <div class="flex items-center gap-2">
+                        <span class="w-14 text-xs font-bold text-gray-700">${t}</span>
+                        <div class="flex-1 bg-gray-100 rounded-full h-5 overflow-hidden border border-gray-200"><div class="h-full bg-gradient-to-r from-rose-500 to-orange-500 rounded-full" style="width:${data.length ? Math.round((c / max) * 100) : 0}%"></div></div>
+                        <span class="text-xs w-12 text-right font-semibold text-gray-600">${c} siswa</span>
+                    </div>`;
+            }
+        });
+
+        const tbody = document.getElementById('dash-table'); tbody.innerHTML = '';
+        if(data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-gray-400 italic">Belum ada respon data siswa yang terekam.</td></tr>`;
+            return;
+        }
+        data.forEach(d => {
+            tbody.innerHTML += `
+                <tr class="border-t border-gray-100 hover:bg-slate-50 transition">
+                    <td class="px-4 py-3 font-semibold text-gray-800">${d.nama||'-'}</td><td>${d.kelas||'-'}</td><td class="text-center">${d.nomor_absen||'-'}</td><td>${d.jenis_kelamin||'-'}</td>
+                    <td><span class="bg-rose-100 text-rose-700 px-2 py-0.5 rounded-md font-bold text-xs border border-rose-200">${d.tipe_kepribadian||'-'}</span></td>
+                    <td class="px-4 py-3 text-xs text-gray-500"><div><b>Hobi:</b> ${d.hobi||'-'}</div><div><b>Cita:</b> ${d.cita_cita||'-'}</div></td>
+                    <td class="px-4 py-3 text-xs text-gray-400">${d.tanggal_pengisian||'-'}</td>
+                </tr>`;
+        });
+    }
 
 
         document.getElementById('dash-extro').textContent = data.length ? Math.round((extroCount / data.length) * 100) + '%' : '0%';
