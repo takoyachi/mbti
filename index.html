@@ -122,7 +122,7 @@
       </div>
       <div class="flex justify-between mt-6">
         <button id="btn-prev" onclick="quizNav(-1)" class="px-5 py-2.5 rounded-xl bg-gray-200 font-medium text-gray-700 hover:bg-gray-300 transition disabled:opacity-40 flex items-center gap-2" disabled><i data-lucide="arrow-left" class="w-4 h-4"></i> Sebelumnya</button> 
-        <button id="btn-next" onclick="quizNav(1)" class="px-5 py-2.5 rounded-xl bg-rose-600 text-white font-medium hover:bg-rose-700 transition disabled:opacity-40 flex items-center gap-2" disabled><span>Selanjutnya</span> <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+        <button id="btn-next" class="px-5 py-2.5 rounded-xl bg-rose-600 text-white font-medium hover:bg-rose-700 transition disabled:opacity-40 flex items-center gap-2" disabled><span>Selanjutnya</span> <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
       </div>
     </div>
   </div>
@@ -203,7 +203,8 @@
   <footer class="mt-auto py-4 text-center text-xs text-gray-400 no-print border-t border-gray-100">&copy; 2026 Kenali Dirimu – Pemetaan Karakter Siswa Baru. Cloud Connected via Netlify.</footer>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyXH0IMPNk0yg59vxvKEoS2C-3WqIKKURsqmfwGPsgTp3pOk4Fq_EUT1VB8w451LtS5/exec"
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyXH0IMPNk0yg59vxvKEoS2C-3WqIKKURsqmfwGPsgTp3pOk4Fq_EUT1VB8w451LtS5/exec";
+
     const questions = [
         {d:'EI',q:'Saat istirahat jam pelajaran, saya lebih suka...',a:'Ngobrol dengan banyak teman di luar kelas',b:'Membaca buku atau bersantai di tempat yang tenang'},
         {d:'EI',q:'Saat mengerjakan proyek kelompok, peranku biasanya...',a:'Aktif memimpin jalannya diskusi dan presentasi',b:'Mengamati keadaan dan fokus mengerjakan bagian tugasku'},
@@ -232,7 +233,7 @@
     ];
 
     const typeData = {
-        ISTJ:{name:'Si Inspektur (Realistis & Tertata)',desc:'Bertanggung jawab, teliti, dan sangat dapat diandalkan. Menyukai keteraturan, hukum tertulis, dan konsistensi.',learn:'Belajar terstruktur dengan instruksi yang jelas, catatan yang rapi, dan jadwal teratur.',comm:'Sampaikan tugas dengan urutan logis, to-the-point, dan hargai ketepatwaktuan mereka.',strength:'Kedisiplinan tinggi, fokus detail, manajemen waktu yang baik.',ekskul:'Pramuka, Paskibra, OSIS, atau Klub Sains/KIR.'},
+        ISTJ:{name:'Si Inspektur (Realistis & Tertata)',desc:'Bertanggung jawab, teliti, dan sangat dapat diandalkan. Menyukai keteraturan, hukum tertulis, dan konsistensi.',learn:'Belajar terstruktur dengan instruksi yang jelas, catatan yang rapi, dan jadwal teratur.',comm:'Sampaikan tugas dengan urutan logis, to-the-point, dan hargai ketepatwaktuan mereka.',strength:'Kedisiplinan tinggi, focus detail, manajemen waktu yang baik.',ekskul:'Pramuka, Paskibra, OSIS, atau Klub Sains/KIR.'},
         ISFJ:{name:'Si Pelindung (Setia & Penuh Perhatian)',desc:'Setia, penuh perhatian, hangat, dan penolong. Selalu memastikan harmoni kelas terjaga.',learn:'Belajar tenang, menggunakan contoh visual nyata, serta review bertahap tanpa paksaan.',comm:'Berikan apresiasi tulus secara personal, gunakan bahasa yang lembut, dan hindari bentakan.',strength:'Empati tinggi, ketelatenan luar biasa, pendengar baik.',ekskul:'PMR, Kesenian, Koperasi Siswa.'},
         INFJ:{name:'Si Penasihat (Idealis & Visioner)',desc:'Idealis, penuh komitmen, visioner, dan memiliki empati mendalam. Mampu membaca potensi tersembunyi teman.',learn:'Belajar dengan pemahaman konsep besar, mengaitkan teori dengan nilai kemanusiaan.',comm:'Dengarkan ide abstrak mereka, beri ruang eksplorasi, hargai privasinya.',strength:'Kreativitas pemikiran, integritas moral, kemampuan konseling teman.',ekskul:'Jurnalistik, Teater/Sastra.'},
         INTJ:{name:'Si Arsitek (Strategis & Konseptual)',desc:'Pemikir strategis, mandiri, logis, dan analitis tingkat tinggi. Punya standar tinggi terhadap kompetensi.',learn:'Belajar mandiri dengan tantangan pemecahan studi kasus yang rumit dan akses literasi luas.',comm:'Hormati kemandirian logisnya. Jangan mikro-manajemen tugasnya, cukup beri target akhir.',strength:'Analisa tajam, kemandirian tinggi, inovasi efisiensi proses.',ekskul:'Robotik, Coding Club, Komunitas Catur.'},
@@ -252,13 +253,6 @@
 
     let currentQ = 0, answers = new Array(24).fill(null), studentData = {}, allRecords = [];
 
-    function toggleLoader(show, text="Memproses...") {
-        const overlay = document.getElementById('loading-overlay');
-        document.getElementById('loading-text').textContent = text;
-        if(show) overlay.classList.remove('hidden'); else overlay.classList.add('hidden');
-    }
-
-    // FITUR PIN LOGIN KEAMANAN DASHBOARD GURU
     function showView(name) {
         if (name === 'dashboard') {
             const inputPIN = prompt("Masukkan PIN Khusus Guru untuk membuka dashboard admin:");
@@ -314,8 +308,18 @@
 
         document.getElementById('btn-prev').disabled = currentQ === 0;
         const nextBtn = document.getElementById('btn-next');
-        if (currentQ === 23) { nextBtn.innerHTML = 'Kirim & Lihat Hasil <i data-lucide="send" class="w-4 h-4 inline"></i>'; nextBtn.disabled = answers[currentQ] === null; }
-        else { nextBtn.innerHTML = 'Selanjutnya <i data-lucide="arrow-right" class="w-4 h-4 inline"></i>'; nextBtn.disabled = answers[currentQ] === null; }
+        
+        // PENGATURAN KLIK TOMBOL NAVIGASI / KIRIM YANG BENAR
+        if (currentQ === 23) { 
+            nextBtn.innerHTML = 'Kirim & Lihat Hasil <i data-lucide="send" class="w-4 h-4 inline"></i>'; 
+            nextBtn.disabled = answers[currentQ] === null;
+            nextBtn.onclick = function() { finishQuiz(); };
+        }
+        else { 
+            nextBtn.innerHTML = 'Selanjutnya <i data-lucide="arrow-right" class="w-4 h-4 inline"></i>'; 
+            nextBtn.disabled = answers[currentQ] === null;
+            nextBtn.onclick = function() { quizNav(1); };
+        }
         lucide.createIcons();
     }
 
@@ -324,47 +328,30 @@
         currentQ += dir; renderQuestion();
     }
 
-    async function fetchOnlineData() {
-        toggleLoader(true, "Mengambil data respon siswa dari Cloud Sheets...");
-        
-        // Gunakan trik anti-cache agar data yang ditarik selalu yang paling baru di sheets
-        const cacheBuster = "?t=" + new Date().getTime();
-        
+    async function finishQuiz() {
+        toggleLoader(true, "Mengirim data ke sistem cloud...");
+        const scores = {E:0, I:0, S:0, N:0, T:0, F:0, J:0, P:0};
+        questions.forEach((q, i) => { if (answers[i] === 'a') scores[q.d[0]]++; else scores[q.d[1]]++; });
+
+        const type = (scores.E >= scores.I ? 'E' : 'I') + (scores.S >= scores.N ? 'S' : 'N') + (scores.T >= scores.F ? 'T' : 'F') + (scores.J >= scores.P ? 'J' : 'P');
+        const pEI = Math.round((scores.E / 6) * 100), pSN = Math.round((scores.S / 6) * 100), pTF = Math.round((scores.T / 6) * 100), pJP = Math.round((scores.J / 6) * 100);
+
+        studentData.tipe_kepribadian = type;
+        studentData.persen_ei = pEI; studentData.persen_sn = pSN; studentData.persen_tf = pTF; studentData.persen_jp = pJP;
+        studentData.tanggal_pengisian = new Date().toLocaleString('id-ID');
+
+        saveToLocal(studentData);
+
         try {
-            const res = await fetch(SCRIPT_URL + cacheBuster, {
-                method: 'GET',
-                mode: 'cors', // Mode CORS diaktifkan karena server Apps Script sudah diizinkan
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
-            
-            if (!res.ok) throw new Error("Respon server bermasalah");
-            
-            const rawData = await res.json();
-            
-            if (Array.isArray(rawData) && rawData.length > 0) {
-                // Simpan data asli dari cloud ke allRecords
-                allRecords = rawData;
-                
-                // Perbarui juga data di local storage perangkat ini agar tetap sinkron
-                localStorage.setItem('kuis_mbti_backup', JSON.stringify(allRecords));
-                
-                renderDashboardData();
-                alert("Sinkronisasi Cloud Berhasil! Terhubung penuh dengan Google Sheets.");
-            } else {
-                alert("Data di Google Sheets kosong atau format kolom belum sesuai.");
-            }
+            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(studentData) });
         } catch(e) { 
-            console.error("Detail Eror Fetch:", e);
-            alert("Gagal memuat otomatis dari cloud karena pembatasan browser. Menampilkan data lokal saat ini. \n\nSolusi: Silakan klik tombol 'Buka Link JSON Data Mentah' untuk memicu data keluar."); 
-            
-            // Jika gagal karena jaringan, tetap muat data cadangan lokal yang ada
-            loadLocalRecords();
-            renderDashboardData();
+            console.error("Koneksi cloud gagal, dialihkan lokal browser.", e); 
         }
+        
         toggleLoader(false);
+        showResult(type, {ei: pEI, sn: pSN, tf: pTF, jp: pJP});
     }
+
     function showResult(type, pcts) {
         showView('result');
         document.getElementById('res-nama').textContent = studentData.nama + ` (${studentData.kelas} / Absen ${studentData.nomor_absen})`;
@@ -410,7 +397,6 @@
         }
     }
 
-    // FITUR HAPUS DATA MANDIRI PER SISWA
     function deleteRecord(index) {
         if(confirm("Apakah Anda yakin ingin menghapus data siswa ini dari daftar dashboard?")) {
             allRecords.splice(index, 1);
@@ -433,8 +419,14 @@
 
     async function fetchOnlineData() {
         toggleLoader(true, "Mengambil data respon siswa dari Cloud Sheets...");
+        const cacheBuster = "?t=" + new Date().getTime();
         try {
-            const res = await fetch(SCRIPT_URL);
+            const res = await fetch(SCRIPT_URL + cacheBuster, {
+                method: 'GET',
+                mode: 'cors',
+                headers: { 'Accept': 'application/json' }
+            });
+            if (!res.ok) throw new Error("Respon server bermasalah");
             const rawData = await res.json();
             
             if (Array.isArray(rawData) && rawData.length > 0) {
@@ -443,18 +435,18 @@
                 renderDashboardData();
                 alert("Sinkronisasi cloud berhasil! Data terbaru telah dimuat.");
             } else {
-                alert("Data cloud kosong atau format tidak sesuai. Menggunakan data cadangan lokal.");
+                alert("Data cloud kosong atau format tidak sesuai.");
             }
         } catch(e) { 
             console.error("Detail Eror Fetch:", e);
-            alert("Gagal terhubung ke Cloud secara langsung akibat CORS browser. Silakan klik tombol 'Buka Link JSON Data Mentah' untuk melihat data di tab baru jika diperlukan."); 
+            alert("Gagal memuat otomatis dari cloud karena pembatasan browser. Menampilkan data lokal saat ini."); 
+            loadLocalRecords();
+            renderDashboardData();
         }
         toggleLoader(false);
-        renderDashboardData();
     }
 
     function renderDashboardData() {
-        // FILTER: Mengeliminasi duplikasi data
         const uniqueData = [];
         const seen = new Set();
 
@@ -467,7 +459,7 @@
         });
 
         const data = uniqueData;
-        allRecords = data; // Sinkronkan kembali agar index hapus selaras
+        allRecords = data;
         
         document.getElementById('dash-total').textContent = data.length;
         let extroCount = 0; const typeCounts = {};
