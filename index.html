@@ -1,477 +1,858 @@
 <!DOCTYPE html>
+
 <html lang="id">
+
 <head>
+
   <meta charset="UTF-8">
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Kenali Dirimu – Pemetaan Karakter Siswa Baru</title>
+
   
+
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   
+
   <style>
+
     body { font-family: 'DM Sans', sans-serif; background-color: #fffafb; }
+
     .view { display: none; }
+
     .view.active { display: block; }
+
     .progress-fill { transition: width 0.3s ease; }
+
     .fade-in { animation: fadeIn 0.3s ease; }
+
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
     @media print { .no-print { display: none !important; } }
+
     .stat-bar { transition: width 0.5s ease; }
+
     
+
     /* Loading Spinner Merah */
+
     .loader { border-top-color: #e11d48; animation: spinner 1.5s linear infinite; }
+
     @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
   </style>
+
 </head>
+
 <body class="min-h-screen flex flex-col">
 
+
+
   <div id="loading-overlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] hidden flex-col items-center justify-center text-white">
+
     <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+
     <p class="font-semibold" id="loading-text">Memproses data...</p>
+
   </div>
+
+
 
   <nav class="no-print sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-rose-100 shadow-sm">
+
     <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+
       <div class="flex items-center gap-2">
+
         <div class="bg-rose-600 text-white p-2 rounded-lg"><i data-lucide="graduation-cap" class="w-5 h-5"></i></div>
+
         <h1 class="font-bold text-lg text-gray-800">Yuk berkenalan!</h1>
+
       </div>
+
       <div class="flex gap-2">
+
         <button onclick="showView('landing')" class="px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-rose-50 text-rose-700 transition">Mulai Tes</button> 
+
         <button onclick="showView('dashboard')" class="px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-rose-50 text-rose-700 transition">Dashboard Guru</button>
+
       </div>
+
     </div>
+
   </nav>
 
+
+
   <div id="view-landing" class="view active">
+
     <header class="relative overflow-hidden bg-gradient-to-b from-rose-50 via-white to-transparent">
+
       <div class="max-w-5xl mx-auto px-4 py-12 md:py-20 flex flex-col md:flex-row items-center gap-8">
+
         <div class="flex-1 text-center md:text-left">
+
           <div class="inline-flex items-center gap-2 bg-rose-100 text-rose-700 rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+
             <i data-lucide="sparkles" class="w-4 h-4"></i> <span>Khusus Siswa Baru</span>
+
           </div>
+
           <h2 class="font-bold text-3xl md:text-5xl leading-tight mb-4 text-gray-900">Kenali Dirimu – Pemetaan Karakter Siswa Baru</h2>
+
           <p class="text-lg mb-6 text-gray-600 leading-relaxed">Selamat datang! Kuis interaktif ini dirancang untuk membantu Guru mengenal gaya belajar, karakter, dan potensi unikmu dengan cara yang seru dan menyenangkan.</p>
+
           <button onclick="document.getElementById('form-section').scrollIntoView({behavior:'smooth'})" class="px-6 py-3 rounded-xl font-semibold bg-rose-600 text-white shadow-lg hover:bg-rose-700 transition">Isi Data Diri</button>
+
         </div>
+
         <div class="flex-1 max-w-sm hidden md:block">
+
           <div class="bg-rose-600/5 p-8 rounded-3xl border border-rose-100 flex items-center justify-center">
+
             <i data-lucide="bot" class="w-32 h-32 text-rose-600 mx-auto animate-pulse"></i>
+
           </div>
+
         </div>
+
       </div>
+
     </header>
 
+
+
     <section id="form-section" class="max-w-2xl mx-auto px-4 py-12">
+
       <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 md:p-8">
+
         <h3 class="font-bold text-xl mb-6 text-gray-800 flex items-center gap-2"><i data-lucide="user-check" class="text-rose-600"></i> Data Identitas Siswa</h3>
+
         <form id="identity-form" class="space-y-4" onsubmit="return startQuiz(event)">
+
           <div>
+
             <label class="block text-sm font-medium text-gray-700 mb-1" for="inp-nama">Nama Lengkap</label>
+
             <input id="inp-nama" type="text" required placeholder="Masukkan nama lengkapmu" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-rose-400 outline-none">
+
           </div>
+
           <div class="grid grid-cols-2 gap-4">
+
             <div>
+
               <label class="block text-sm font-medium text-gray-700 mb-1" for="inp-kelas">Kelas</label>
+
               <select id="inp-kelas" required class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-rose-400 outline-none">
+
                 <option value="">Pilih Kelas...</option>
+
                 <option value="X AKC 1">X AKC 1</option><option value="X AKC 2">X AKC 2</option>
+
                 <option value="X PM 1">X PM 1</option><option value="X PM 2">X PM 2</option><option value="X PM 3">X PM 3</option><option value="X PM 4">X PM 4</option><option value="X PM 5">X PM 5</option>
+
                 <option value="X AKL 1">X AKL 1</option><option value="X AKL 2">X AKL 2</option>
+
                 <option value="X MP 1">X MP 1</option><option value="X MP 2">X MP 2</option><option value="X MP 3">X MP 3</option><option value="X MP 4">X MP 4</option><option value="X MP 5">X MP 5</option>
+
                 <option value="X FKK 1">X FKK 1</option><option value="X FKK 2">X FKK 2</option>
+
                 <option value="X DKV 1">X DKV 1</option><option value="X DKV 2">X DKV 2</option><option value="X DKV 3">X DKV 3</option>
+
               </select>
+
             </div>
+
             <div>
+
               <label class="block text-sm font-medium text-gray-700 mb-1" for="inp-absen">Nomor Absen</label>
+
               <input id="inp-absen" type="number" min="1" max="50" required placeholder="Contoh: 12" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-rose-400 outline-none">
+
             </div>
+
           </div>
+
           <div>
+
             <label class="block text-sm font-medium text-gray-700 mb-1" for="inp-jk">Jenis Kelamin</label>
+
             <select id="inp-jk" required class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-rose-400 outline-none">
+
               <option value="">Pilih...</option><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option>
+
             </select>
+
           </div>
+
           <div>
+
             <label class="block text-sm font-medium text-gray-700 mb-1" for="inp-hobi">Hobi</label>
+
             <input id="inp-hobi" type="text" required placeholder="Contoh: Membaca, Olahraga, Coding" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-rose-400 outline-none">
+
           </div>
+
           <div>
+
             <label class="block text-sm font-medium text-gray-700 mb-1" for="inp-cita">Cita-cita</label>
+
             <input id="inp-cita" type="text" required placeholder="Contoh: Programmer, Wirausaha" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-rose-400 outline-none">
+
           </div>
+
           <button type="submit" class="w-full py-3 rounded-xl font-semibold bg-rose-600 text-white shadow hover:bg-rose-700 transition mt-4">Mulai Pengisian Kuis</button>
+
         </form>
+
       </div>
+
     </section>
+
   </div>
+
+
 
   <div id="view-quiz" class="view">
+
     <div class="max-w-2xl mx-auto px-4 py-8">
+
       <div class="mb-6">
+
         <div class="flex justify-between text-sm text-gray-500 mb-2"><span id="quiz-progress-text">Pertanyaan 1 dari 24</span> <span id="quiz-pct">0%</span></div>
+
         <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+
           <div id="quiz-progress-bar" class="progress-fill h-full bg-gradient-to-r from-rose-500 to-orange-500 rounded-full" style="width:0%"></div>
+
         </div>
+
       </div>
+
       <div id="quiz-question-area" class="fade-in bg-white rounded-2xl shadow-lg p-6 md:p-8 border border-gray-100">
+
         <p id="quiz-q-text" class="text-xl font-semibold text-gray-800 mb-6"></p>
+
         <div id="quiz-options" class="space-y-3"></div>
+
       </div>
+
       <div class="flex justify-between mt-6">
+
         <button id="btn-prev" onclick="quizNav(-1)" class="px-5 py-2.5 rounded-xl bg-gray-200 font-medium text-gray-700 hover:bg-gray-300 transition disabled:opacity-40 flex items-center gap-2" disabled><i data-lucide="arrow-left" class="w-4 h-4"></i> Sebelumnya</button> 
+
         <button id="btn-next" onclick="quizNav(1)" class="px-5 py-2.5 rounded-xl bg-rose-600 text-white font-medium hover:bg-rose-700 transition disabled:opacity-40 flex items-center gap-2" disabled><span>Selanjutnya</span> <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+
       </div>
+
     </div>
+
   </div>
+
+
 
   <div id="view-result" class="view">
+
     <div class="max-w-3xl mx-auto px-4 py-8" id="result-content">
+
       <div class="text-center mb-8 fade-in">
+
         <p class="text-gray-500 mb-1">Hasil Pemetaan Karakter</p>
+
         <h2 id="res-nama" class="text-3xl font-bold text-gray-800"></h2>
+
       </div>
+
       <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 border border-gray-100 fade-in">
+
         <div class="text-center mb-6">
+
           <div id="res-type" class="inline-block text-5xl font-extrabold bg-gradient-to-r from-rose-600 to-orange-600 bg-clip-text text-transparent"></div>
+
           <p id="res-type-name" class="text-rose-600 font-semibold mt-2 text-xl"></p>
+
         </div>
+
         <div id="res-dimensions" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8"></div>
+
         <div class="space-y-6 border-t border-gray-100 pt-6">
+
           <div class="bg-rose-50/50 p-4 rounded-xl border border-rose-100"><h4 class="font-bold text-rose-800 mb-1 flex items-center gap-2">Deskripsi Karakter</h4><p id="res-desc" class="text-gray-700 leading-relaxed text-sm"></p></div>
+
           <div class="bg-orange-50/50 p-4 rounded-xl border border-orange-100"><h4 class="font-bold text-orange-800 mb-1 flex items-center gap-2">Gaya Belajar yang Cocok</h4><p id="res-learn" class="text-gray-700 leading-relaxed text-sm"></p></div>
+
           <div class="bg-teal-50/50 p-4 rounded-xl border border-teal-100"><h4 class="font-bold text-teal-800 mb-1 flex items-center gap-2">Cara Komunikasi Efektif</h4><p id="res-comm" class="text-gray-700 leading-relaxed text-sm"></p></div>
+
           <div class="bg-amber-50/50 p-4 rounded-xl border border-amber-100"><h4 class="font-bold text-amber-800 mb-1 flex items-center gap-2">Potensi Kekuatan di Kelas</h4><p id="res-strength" class="text-gray-700 leading-relaxed text-sm"></p></div>
+
           <div class="bg-red-50/50 p-4 rounded-xl border border-red-100"><h4 class="font-bold text-red-800 mb-1 flex items-center gap-2">Rekomendasi Ekstrakurikuler</h4><p id="res-ekskul" class="text-gray-700 leading-relaxed text-sm"></p></div>
+
         </div>
+
       </div>
+
       <div class="flex flex-wrap gap-3 justify-center mt-8 no-print">
+
         <button onclick="window.print()" class="px-5 py-2.5 rounded-xl bg-rose-600 text-white font-medium hover:bg-rose-700 transition flex items-center gap-2 shadow"><i data-lucide="printer" class="w-4 h-4"></i> Cetak Laporan Hasil</button> 
+
         <button onclick="showView('landing')" class="px-5 py-2.5 rounded-xl bg-gray-200 text-gray-700 font-medium hover:bg-gray-300 transition">Selesai & Kembali</button>
+
       </div>
+
     </div>
+
   </div>
+
+
 
   <div id="view-dashboard" class="view">
+
     <div class="max-w-6xl mx-auto px-4 py-8">
+
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+
         <h2 class="font-bold text-2xl text-gray-800 flex items-center gap-2"><i data-lucide="layout-dashboard" class="text-rose-600"></i> Dashboard Administrasi Online Guru</h2>
+
         <div class="flex gap-2">
+
           <button onclick="fetchOnlineData()" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium transition flex items-center gap-2 shadow"><i data-lucide="refresh-cw" class="w-4 h-4"></i> Sinkronisasi Data Baru</button>
+
           <button onclick="exportToCSV()" class="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium transition flex items-center gap-2 shadow"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Ekspor ke Excel</button>
+
         </div>
+
       </div>
+
       
+
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+
         <div class="bg-white rounded-xl shadow border border-gray-100 p-5 text-center"><p class="text-4xl font-extrabold text-rose-600" id="dash-total">0</p><p class="text-gray-500 font-medium text-sm mt-1">Total Siswa Mengisi</p></div>
+
         <div class="bg-white rounded-xl shadow border border-gray-100 p-5 text-center"><p class="text-4xl font-extrabold text-orange-600" id="dash-extro">0%</p><p class="text-gray-500 font-medium text-sm mt-1">Siswa Ekstrovert (E)</p></div>
+
         <div class="bg-white rounded-xl shadow border border-gray-100 p-5 text-center"><p class="text-4xl font-extrabold text-teal-600" id="dash-intro">0%</p><p class="text-gray-500 font-medium text-sm mt-1">Siswa Introvert (I)</p></div>
+
       </div>
+
+
 
       <div class="bg-white rounded-xl shadow border border-gray-100 p-5 mb-8">
+
         <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2"><i data-lucide="bar-chart-3" class="text-orange-600"></i> Distribusi Tipe Kepribadian Kelas</h3>
+
         <div id="dash-chart" class="space-y-3"></div>
+
       </div>
 
+
+
       <div class="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
+
         <div class="p-4 border-b border-gray-100 bg-gray-50/50"><h4 class="font-bold text-gray-700">Daftar Lengkap Respon Siswa (Real-time Cloud)</h4></div>
+
         <div class="overflow-x-auto">
+
           <table class="w-full text-sm">
+
             <thead class="bg-gray-50 text-gray-600 font-semibold border-b border-gray-200">
+
               <tr>
+
                 <th class="px-4 py-3 text-left">Nama</th><th class="px-4 py-3 text-left">Kelas</th><th class="px-4 py-3 text-left">No. Absen</th><th class="px-4 py-3 text-left">L/P</th><th class="px-4 py-3 text-left">Tipe Kepribadian</th><th class="px-4 py-3 text-left">Hobi / Cita-cita</th><th class="px-4 py-3 text-left">Tanggal Pengisian</th>
+
               </tr>
+
             </thead>
+
             <tbody id="dash-table" class="divide-y divide-gray-100 text-gray-700"></tbody>
+
           </table>
+
         </div>
+
       </div>
+
     </div>
+
   </div>
+
+
 
   <footer class="mt-auto py-4 text-center text-xs text-gray-400 no-print border-t border-gray-100">&copy; 2026 Kenali Dirimu – Pemetaan Karakter Siswa Baru. Cloud Connected via Netlify.</footer>
 
+
+
   <script>
+
     // MASUKKAN URL GOOGLE WEB APP SCRIPT ANDA DI SINI
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwOr7BYBVn7s0wtTWP7u6pqE1KnRFDpDKWhGQ8kYWoR5tn6JIqMjLkIlMTU80aI3AuG/exec";
+
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxwkbJGG_3XlEPmp-91rxZqtMpJQmn25OCvEoqOMrlLT-E_LfHVSvilhtJQSLncrvOG/exec";
+
+
 
     const questions = [
+
         {d:'EI',q:'Saat istirahat jam pelajaran, saya lebih suka...',a:'Ngobrol dengan banyak teman di luar kelas',b:'Membaca buku atau bersantai di tempat yang tenang'},
+
         {d:'EI',q:'Saat mengerjakan proyek kelompok, peranku biasanya...',a:'Aktif memimpin jalannya diskusi dan presentasi',b:'Mengamati keadaan dan fokus mengerjakan bagian tugasku'},
+
         {d:'EI',q:'Saya merasa semangat dan berenergi kembali ketika...',a:'Berkumpul dan seru-seruan bersama teman-teman',b:'Mempunyai waktu me-time sendirian tanpa gangguan'},
+
         {d:'EI',q:'Ketika memasuki ruangan kelas yang baru, saya cenderung...',a:'Langsung menyapa dan berkenalan dengan orang terdekat',b:'Duduk tenang dan menunggu orang lain menyapa duluan'},
+
         {d:'EI',q:'Saat ditunjuk guru untuk presentasi mendadak, saya merasa...',a:'Tertantang dan percaya diri berbicara spontan',b:'Gugup dan berharap bisa membaca teks saja'},
+
         {d:'EI',q:'Menghabiskan hari libur sekolah paling seru dengan...',a:'Jalan-jalan keluar bareng circle pertemanan',b:'Berdiam di kamar melakukan hobi pribadi'},
+
         {d:'SN',q:'Metode penjelasan materi yang paling saya sukai adalah...',a:'Diberikan contoh kasus nyata yang langsung dipraktikkan',b:'Dijelaskan konsep teori, rumus dasar, dan ide kreatifnya'},
+
         {d:'SN',q:'Ketika mengamati sesuatu di sekitar, fokus utama saya pada...',a:'Fakta detail, data konkret, dan keadaan riil di lapangan',b:'Pola masa depan, makna tersirat, dan berbagai kemungkinan baru'},
+
         {d:'SN',q:'Buku atau tontonan yang paling menarik perhatian saya...',a:'Kisah nyata (biografi), berita terkini, atau konten tutorial nyata',b:'Cerita fiksi ilmiah, fantasi imajinatif, atau teori konspirasi'},
+
         {d:'SN',q:'Dalam menghadapi masalah sehari-hari, saya lebih percaya...',a:'Pengalaman nyata yang sudah terbukti berhasil sebelumnya',b:'Firasat kuat (intuisi) serta kreativitas berpikir di momen itu'},
+
         {d:'SN',q:'Dalam mengerjakan tugas praktik produktif SMK, saya menyukai...',a:'Panduan lembar kerja yang runut berurutan langkah demi langkah',b:'Kebebasan bereksperimen menemukan teknik penyelesaian alternatif'},
+
         {d:'SN',q:'Jika guru memberikan teka-teki logika, respons saya...',a:'Mencari data yang pasti-pasti saja untuk menjawabnya',b:'Mencoba melihat dari sudut pandang abstrak yang out of the box'},
+
         {d:'TF',q:'Ketika mengambil keputusan penting di dalam tim, dasar utamanya...',a:'Logika murni, analisa objektif, dan hitungan untung-rugi',b:'Perasaan empati, dampak kenyamanan psikis anggota, dan keharmonisan'},
+
         {d:'TF',q:'Apabila teman sebangku curhat masalah pribadinya, saya spontan...',a:'Memberikan saran taktis dan solusi penyelesaian masalahnya',b:'Mendengarkan penuh empati dan berusaha menenangkan perasaannya'},
+
         {d:'TF',q:'Prinsip hidup yang paling saya junjung tinggi di sekolah...',a:'Kebenaran objektif, keadilan tanpa pandang bulu, dan kejujuran',b:'Menjaga kerukunan antar teman, toleransi, dan menghindari konflik'},
+
         {d:'TF',q:'Bagaimana caramu menghadapi perdebatan di kelas?',a:'Menghadapinya langsung dengan argumen kuat berbasis data factual',b:'Memilih mengalah atau memediasi agar suasana tidak menjadi canggung'},
+
         {d:'TF',q:'Kritikan dari guru atau teman menurut pandangan saya adalah...',a:'Hal biasa yang penting untuk mengoreksi performa performa diri',b:'Masukan berharga namun cara penyampaiannya harus dijaga agar tidak menyinggung'},
+
         {d:'TF',q:'Saat menilai hasil presentasi kelompok lain, fokus perhatian saya...',a:'Hasil akhir produk dan ketepatan materi yang ditampilkan',b:'Besarnya usaha, kekompakan proses, serta niat kerja keras mereka'},
+
         {d:'JP',q:'Setiap kali mendapatkan tugas sekolah dari guru, biasanya saya...',a:'Langsung menyusun jadwal pengerjaan agar selesai sebelum tenggat',b:'Bersikap fleksibel, santai, dan mengerjakannya sesuai mood kondisi'},
+
         {d:'JP',q:'Kondisi lingkungan belajar yang membuat saya nyaman adalah...',a:'Segala hal terencana terjadwal rapi dan minim perubahan mendadak',b:'Suasana dinamis, penuh improvisasi spontan, dan penuh kejutan bebas'},
+
         {d:'JP',q:'Baju saya, batas akhir pengumpulan tugas (deadline) merupakan...',a:'Alarm wajib yang harus ditepati jauh-jauh hari sebelumnya',b:'Pemicu adrenalin terbaik untuk kerja cepat sistem kebut semalam (SKS)'},
+
         {d:'JP',q:'Kondisi meja belajar atau isi tas sekolah saya biasanya...',a:'Sangat rapi, barang dikelompokkan sesuai fungsi dan tempatnya',b:'Sedikit berantakan tak beraturan, tapi saya hafal posisi meletakkannya'},
+
         {d:'JP',q:'Rencana kegiatan studi tur/liburan kelas idealnya dikonsep...',a:'Membuat susunan jadwal acara (itinerary) detail jam per jamnya',b:'Berangkat saja dulu, urusan aktivitas di lokasi dipikirkan nanti pas sampai'},
+
         {d:'JP',q:'Dalam mengelola pekerjaan rumah (PR), kebiasaan utama saya...',a:'Menyicil pengerjaan secepat mungkin biar pikiran tenang bebas beban',b:'Menunda pengerjaan sampai mendekati waktu hari-H pengumpulan'}
+
     ];
 
+
+
     const typeData = {
+
         ISTJ:{name:'Si Inspektur (Realistis & Tertata)',desc:'Bertanggung jawab, teliti, dan sangat dapat diandalkan. Menyukai keteraturan, hukum tertulis, dan konsistensi.',learn:'Belajar terstruktur dengan instruksi yang jelas, catatan yang rapi, dan jadwal teratur.',comm:'Sampaikan tugas dengan urutan logis, to-the-point, dan hargai ketepatwaktuan mereka.',strength:'Kedisiplinan tinggi, fokus detail, manajemen waktu yang baik.',ekskul:'Pramuka, Paskibra, OSIS, atau Klub Sains/KIR.'},
+
         ISFJ:{name:'Si Pelindung (Setia & Penuh Perhatian)',desc:'Setia, penuh perhatian, hangat, dan penolong. Selalu memastikan harmoni kelas terjaga.',learn:'Belajar tenang, menggunakan contoh visual nyata, serta review bertahap tanpa paksaan.',comm:'Berikan apresiasi tulus secara personal, gunakan bahasa yang lembut, dan hindari bentakan.',strength:'Empati tinggi, ketelatenan luar biasa, pendengar baik.',ekskul:'PMR, Kesenian, Koperasi Siswa.'},
+
         INFJ:{name:'Si Penasihat (Idealis & Visioner)',desc:'Idealis, penuh komitmen, visioner, dan memiliki empati mendalam. Mampu membaca potensi tersembunyi teman.',learn:'Belajar dengan pemahaman konsep besar, mengaitkan teori dengan nilai kemানুsiaan.',comm:'Dengarkan ide abstrak mereka, beri ruang eksplorasi, hargai privasinya.',strength:'Kreativitas pemikiran, integritas moral, kemampuan konseling teman.',ekskul:'Jurnalistik, Teater/Sastra.'},
+
         INTJ:{name:'Si Arsitek (Strategis & Konseptual)',desc:'Pemikir strategis, mandiri, logis, dan analitis tingkat tinggi. Punya standar tinggi terhadap kompetensi.',learn:'Belajar mandiri dengan tantangan pemecahan studi kasus yang rumit dan akses literasi luas.',comm:'Hormati kemandirian logisnya. Jangan mikro-manajemen tugasnya, cukup beri target akhir.',strength:'Analisa tajam, kemandirian tinggi, inovasi efisiensi proses.',ekskul:'Robotik, Coding Club, Komunitas Catur.'},
+
         ISTP:{name:'Si Mekanik (Praktis & Problem Solver)',desc:'Praktis, realistis, tenang saat krisis, dan sangat menyukai utak-atik alat fisik atau logika sistem.',learn:'Belajar paling efektif lewat praktik bengkel/laboratorium (learning by doing) dan trial-error.',comm:'Gunakan kalimat pendek langsung ke instruksi teknis objeknya. Kurangi ceramah teori.',strength:'Ketangkasan teknis, problem-solving instan, tenang di bawah tekanan.',ekskul:'Klub Teknik Otomotif/Elektro, Olahraga Silat/Futsal, Coding.'},
+
         ISFP:{name:'Si Seniman (Estetis & Fleksibel)',desc:'Lembut, tenang, ramah, dan sangat peka terhadap estetika serta keindahan. Menghargai kebebasan berekspresi.',learn:'Belajar nyaman lewat visualisasi warna, musik latar, proyek seni kreatif, tanpa kejar deadline.',comm:'Apresiasi karya uniknya secara langsung. Jangan banding-bandingkan dengan nilai siswa lain.',strength:'Bakat seni/desain grafis, adaptasi situasi baru, kepedulian tinggi.',ekskul:'Seni Rupa/Lukis, Musik, Fotografi/Videografi.'},
+
         INFP:{name:'Si Mediator (Idealis & Penuh Makna)',desc:'Sangat idealis, menjunjung prinsip personal, imajinatif, dan selalu mencari makna mendalam dari tugasnya.',learn:'Belajar melalui tugas menulis narasi, cerita kasus emosional, dan ruang belajar tanpa kompetisi.',comm:'Sentuh sisi emosional dan idealisme mereka. Hargai orisinalitas buah pemikiran pribadinya.',strength:'Kemampuan menulis/sastra, orisinalitas ide konsep.',ekskul:'Klub Menulis/Sastra, Pecinta Alam.'},
+
         INTP:{name:'Si Pemikir (Analitis & Logis)',desc:'Sangat logis, penuh rasa ingin tahu terhadap cara kerja sistem, teoritis, dan senang menganalisis data.',learn:'Belajar mandiri dengan membaca jurnal, membedah algoritma coding, diskusi debat terbuka.',comm:'Gunakan argumen logis ilmiah yang kuat. Berikan mereka waktu jeda berpikir sebelum menjawab.',strength:'Konseptualisasi teori, pemikiran analitis kritis, inovasi tinggi.',ekskul:'Programming, Karya Ilmiah Remaja (KIR), English Debating.'},
+
         ESTP:{name:'Si Pengusaha (Energik & Aksi Nyata)',desc:'Sangat dinamis, berani mengambil risiko, penuh energi, praktis, dan menyukai aksi nyata lapangan.',learn:'Belajar melalui permainan simulasi interaktif, kompetisi grup, dan praktik lapangan langsung.',comm:'Gunakan metode interaktif, selipkan humor, langsung beri tugas aktivitas fisik.',strength:'Kemampuan persuasi, keberanian bertindak cepat, kepemimpinan taktis.',ekskul:'Futsal/Basket, Paskibra, Tim Kewirausahaan.'},
+
         ESFP:{name:'Si Penghibur (Ceria & Spontan)',desc:'Ramah, ceria, spontan, menyukai kehidupan, dan berbakat membawa suasana gembira ke kelas.',learn:'Belajar berkelompok penuh tawa, menggunakan game kuis edukasi, serta presentasi panggung.',comm:'Ajak berinteraksi dengan antusias, berikan panggung ekspresi, sampaikan koreksi privat.',strength:'Komunikasi publik (Public Speaking), pencair suasana kelas.',ekskul:'Modern Dance/Teater, MC/Broadcasting, Event Organizer.'},
+
         ENFP:{name:'Si Aktivis (Kreatif & Antusias)',desc:'Antusias, sangat kreatif, imajinatif, ramah, dan penuh energi sosial. Melihat potensi di tiap situasi.',learn:'Belajar kelompok, sesi brainstorming ide bebas, proyek pembuatan video/konten kreatif.',comm:'Sambut antusiasme mereka, beri arahan koridor tugas, lalu biarkan mereka berkreasi.',strength:'Kreativitas tanpa batas, komunikasi persuasif, memotivasi tim.',ekskul:'Jurnalistik Digital, Paduan Suara, Teater/Drama, OSIS.'},
+
         ENTP:{name:'Si Pendebat (Cerdas & Inovatif)',desc:'Cerdas, cepat berpikir, kritis, dan sangat menyukai tantangan mendebat logika lama.',learn:'Belajar melalui metode perdebatan argumentatif, teka-teki logika bercabang, studi kasus inovasi.',comm:'Ajak adu argumen sehat berbasis data. Tantang mereka membuktikan ide barunya.',strength:'Berpikir kritis strategis, inovasi radikal, kemampuan bernegosiasi.',ekskul:'Klub Debat, Karya Ilmiah Remaja (KIR).'},
+
         ESTJ:{name:'Si Eksekutif (Tegas & Pengorganisasi)',desc:'Tegas, terorganisir, berorientasi hasil nyata, pemimpin alami yang ahli mengelola orang dan aturan.',learn:'Belajar dengan target pencapaian nilai yang jelas, kompetisi peringkat, silabus terstruktur.',comm:'Bicaralah secara tegas, sampaikan target tugas dengan parameter kuantitatif yang jelas.',strength:'Kepemimpinan struktural, kemampuan organisasi kepanitiaan.',ekskul:'Ketua OSIS, Komandan Paskibra, Pramuka.'},
+
         ESFJ:{name:'Si Konsul (Sosial & Kooperatif)',desc:'Sangat ramah, populer, kooperatif, berhati lembut, berkomitmen menciptakan keharmonisan tim.',learn:'Belajar kelompok bersama teman dekat, metode peer-teaching dengan apresiasi.',comm:'Tunjukkan perhatian interpersonal, tanyakan kabar mereka, beri pujian tulus.',strength:'Kemampuan merawat relasi pertemanan, manajemen konflik kelompok.',ekskul:'PMR, Koperasi Siswa, Sie Humas Panitia.'},
+
         ENFJ:{name:'Si Protagonis (Karismatik & Inspiratif)',desc:'Sangat karismatik, inspiratif, penuh semangat, ahli menggerakkan siswa melakukan perubahan positif.',learn:'Belajar melalui diskusi kelompok besar, mentoring adik kelas, proyek kolaborasi aksi sosial.',comm:'Libatkan mereka sebagai pemimpin forum kelompok. Hargai visi idealis mereka.',strength:'Kepemimpinan karismatik, retorika bicara publik mumpuni.',ekskul:'Pengurus Inti OSIS, Public Speaking Club.'},
+
         ENTJ:{name:'Si Komandan (Ambisius & Strategis)',desc:'Ambisius, tegas, dominan, berpikiran strategis, didorong keinginan kuat memimpin sistem baru.',learn:'Belajar dengan target studi kasus bisnis korporasi, kompetisi tingkat tinggi.',comm:'Beri mereka otoritas tanggung jawab besar. Sampaikan feedback secara langsung dan tajam.',strength:'Perencanaan strategis makro, ketegasan memimpin di masa krisis.',ekskul:'Pengurus Inti OSIS, Komunitas Debat, Inkubator Bisnis.'}
+
     };
+
+
 
     let currentQ = 0, answers = new Array(24).fill(null), studentData = {}, allRecords = [];
 
+
+
     function toggleLoader(show, text="Memproses...") {
+
         const overlay = document.getElementById('loading-overlay');
+
         document.getElementById('loading-text').textContent = text;
+
         if(show) overlay.classList.remove('hidden'); else overlay.classList.add('hidden');
+
     }
+
+
 
     function showView(name) {
+
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+
         const targetView = document.getElementById('view-' + name);
+
         if (targetView) targetView.classList.add('active');
+
         if (name === 'dashboard') fetchOnlineData();
+
     }
+
+
 
     function startQuiz(e) {
+
         e.preventDefault();
+
         studentData = {
+
             nama: document.getElementById('inp-nama').value.trim(),
+
             kelas: document.getElementById('inp-kelas').value,
+
             nomor_absen: document.getElementById('inp-absen').value.trim(),
+
             jenis_kelamin: document.getElementById('inp-jk').value,
+
             hobi: document.getElementById('inp-hobi').value.trim(),
+
             cita_cita: document.getElementById('inp-cita').value.trim()
+
         };
+
         currentQ = 0; answers.fill(null);
+
         showView('quiz');
+
         renderQuestion();
+
     }
 
-    function renderDashboardData() {
-        const data = allRecords;
-        document.getElementById('dash-total').textContent = data.length;
-        let extroCount = 0; const typeCounts = {};
-        Object.keys(typeData).forEach(k => typeCounts[k] = 0);
 
-        data.forEach(d => {
-            if(d.tipe_kepribadian) {
-                if(d.tipe_kepribadian[0] === 'E') extroCount++;
-                typeCounts[d.tipe_kepribadian]++;
-            }
+
+    function renderQuestion() {
+
+        const q = questions[currentQ];
+
+        document.getElementById('quiz-q-text').textContent = (currentQ + 1) + '. ' + q.q;
+
+        const pct = Math.round((currentQ / 24) * 100);
+
+        document.getElementById('quiz-progress-bar').style.width = pct + '%';
+
+        document.getElementById('quiz-pct').textContent = pct + '%';
+
+        document.getElementById('quiz-progress-text').textContent = `Pertanyaan ${currentQ + 1} dari 24`;
+
+
+
+        const opts = document.getElementById('quiz-options'); opts.innerHTML = '';
+
+        [{label: q.a, val: 'a'}, {label: q.b, val: 'b'}].forEach(o => {
+
+            const btn = document.createElement('button');
+
+            btn.type = 'button';
+
+            btn.className = 'w-full text-left px-5 py-4 rounded-xl border-2 transition font-medium text-gray-700 ' + 
+
+                            (answers[currentQ] === o.val ? 'border-rose-600 bg-rose-50 text-rose-700 font-semibold' : 'border-gray-200 hover:border-rose-300 hover:bg-rose-50/30');
+
+            btn.textContent = o.label;
+
+            btn.onclick = () => { answers[currentQ] = o.val; setTimeout(() => { if (currentQ < 23) { currentQ++; renderQuestion(); } else { renderQuestion(); } }, 200); };
+
+            opts.appendChild(btn);
+
         });
 
-        document.getElementById('dash-extro').textContent = data.length ? Math.round((extroCount / data.length) * 100) + '%' : '0%';
-        document.getElementById('dash-intro').textContent = data.length ? Math.round(((data.length - extroCount) / data.length) * 100) + '%' : '0%';
 
-        const chart = document.getElementById('dash-chart'); chart.innerHTML = '';
-        const max = Math.max(...Object.values(typeCounts), 1);
-        Object.entries(typeCounts).sort((a,b) => b[1] - a[1]).forEach(([t, c]) => {
-            if (c > 0 || data.length === 0) {
-                chart.innerHTML += `
-                    <div class="flex items-center gap-2">
-                        <span class="w-14 text-xs font-bold text-gray-700">${t}</span>
-                        <div class="flex-1 bg-gray-100 rounded-full h-5 overflow-hidden border border-gray-200"><div class="h-full bg-gradient-to-r from-rose-500 to-orange-500 rounded-full" style="width:${data.length ? Math.round((c / max) * 100) : 0}%"></div></div>
-                        <span class="text-xs w-12 text-right font-semibold text-gray-600">${c} siswa</span>
-                    </div>`;
-            }
-        });
 
-        const tbody = document.getElementById('dash-table'); tbody.innerHTML = '';
-        if(data.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-gray-400 italic">Belum ada respon siswa secara online.</td></tr>`;
-            return;
-        }
-
-        // PERBAIKAN STRUKTUR PEMBACAAN DATA DARI API GOOGLE SHEETS
-        data.forEach(d => {
-            const namaSiswa = d.nama || '-';
-            const kelasSiswa = d.kelas || '-';
-            const noAbsen = d.nomor_absen || '-';
-            const jk = d.jenis_kelamin || '-';
-            const mbti = d.tipe_kepribadian || '-';
-            const hobiSiswa = d.hobi || '-';
-            const citaSiswa = d.cita_cita || '-';
-            const tgl = d.tanggal_pengisian || '-';
-
-            const tr = document.createElement('tr');
-            tr.className = 'border-t border-gray-200 hover:bg-slate-50 transition';
-            tr.innerHTML = `
-                <td class="px-4 py-3 font-semibold text-gray-800">${namaSiswa}</td>
-                <td class="px-4 py-3">${kelasSiswa}</td>
-                <td class="px-4 py-3 text-center">${noAbsen}</td>
-                <td class="px-4 py-3">${jk}</td>
-                <td class="px-4 py-3">
-                    <span class="bg-rose-100 text-rose-700 px-2 py-0.5 rounded-md font-bold text-xs border border-rose-200">
-                        ${mbti}
-                    </span>
-                </td>
-                <td class="px-4 py-3 text-xs text-gray-500">
-                    <div><b>Hobi:</b> ${hobiSiswa}</div>
-                    <div><b>Cita:</b> ${citaSiswa}</div>
-                </td>
-                <td class="px-4 py-3 text-xs text-gray-400">${tgl}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
         document.getElementById('btn-prev').disabled = currentQ === 0;
+
         const nextBtn = document.getElementById('btn-next');
+
         if (currentQ === 23) { nextBtn.innerHTML = 'Kirim & Lihat Hasil <i data-lucide="send" class="w-4 h-4 inline"></i>'; nextBtn.disabled = answers[currentQ] === null; }
+
         else { nextBtn.innerHTML = 'Selanjutnya <i data-lucide="arrow-right" class="w-4 h-4 inline"></i>'; nextBtn.disabled = answers[currentQ] === null; }
+
         lucide.createIcons();
+
     }
+
+
 
     function quizNav(dir) {
+
         if (dir === 1 && currentQ === 23) { finishQuiz(); return; }
+
         currentQ += dir; renderQuestion();
+
     }
+
+
 
     async function finishQuiz() {
+
         toggleLoader(true, "Mengirim data ke sistem cloud...");
+
         const scores = {E:0, I:0, S:0, N:0, T:0, F:0, J:0, P:0};
+
         questions.forEach((q, i) => { if (answers[i] === 'a') scores[q.d[0]]++; else scores[q.d[1]]++; });
 
+
+
         const type = (scores.E >= scores.I ? 'E' : 'I') + (scores.S >= scores.N ? 'S' : 'N') + (scores.T >= scores.F ? 'T' : 'F') + (scores.J >= scores.P ? 'J' : 'P');
+
         const pEI = Math.round((scores.E / 6) * 100), pSN = Math.round((scores.S / 6) * 100), pTF = Math.round((scores.T / 6) * 100), pJP = Math.round((scores.J / 6) * 100);
 
+
+
         studentData.tipe_kepribadian = type;
+
         studentData.persen_ei = pEI; studentData.persen_sn = pSN; studentData.persen_tf = pTF; studentData.persen_jp = pJP;
+
         studentData.tanggal_pengisian = new Date().toLocaleString('id-ID');
 
+
+
         try {
+
             if(SCRIPT_URL !== "GANTI_DENGAN_URL_WEB_APP_SCRIPT_ANDA") {
+
                 await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(studentData) });
+
             }
+
         } catch(e) { console.error("Koneksi cloud gagal, dialihkan lokal browser.", e); }
+
         
+
         toggleLoader(false);
+
         showResult(type, {ei: pEI, sn: pSN, tf: pTF, jp: pJP});
+
     }
+
+
 
     function showResult(type, pcts) {
+
         showView('result');
+
         document.getElementById('res-nama').textContent = studentData.nama + ` (${studentData.kelas} / Absen ${studentData.nomor_absen})`;
+
         document.getElementById('res-type').textContent = type;
+
         const info = typeData[type] || typeData.INFJ;
+
         document.getElementById('res-type-name').textContent = info.name;
+
         document.getElementById('res-desc').textContent = info.desc;
+
         document.getElementById('res-learn').textContent = info.learn;
+
         document.getElementById('res-comm').textContent = info.comm;
+
         document.getElementById('res-strength').textContent = info.strength;
+
         document.getElementById('res-ekskul').textContent = info.ekskul;
 
+
+
         const dims = document.getElementById('res-dimensions'); dims.innerHTML = '';
+
         const dataDimensi = [
+
             {label:'Orientasi Energi', left:'Ekstrovert (E)', right:'Introvert (I)', val:pcts.ei},
+
             {label:'Pengolahan Informasi', left:'Sensing (S)', right:'Intuition (N)', val:pcts.sn},
+
             {label:'Pengambilan Keputusan', left:'Thinking (T)', right:'Feeling (F)', val:pcts.tf},
+
             {label:'Pola Aksi Kerja', left:'Judging (J)', right:'Perceiving (P)', val:pcts.jp}
+
         ];
+
         dataDimensi.forEach(d => {
+
             dims.innerHTML += `
+
                 <div class="bg-gray-50 rounded-xl p-4 border border-gray-100 shadow-sm">
+
                     <p class="text-xs font-bold text-gray-500 mb-1 text-center">${d.label}</p>
+
                     <div class="w-full bg-gray-200 rounded-full h-2.5 mb-1.5 overflow-hidden"><div class="h-full bg-rose-600 rounded-full" style="width:${d.val}%"></div></div>
+
                     <p class="text-[11px] text-gray-600 flex justify-between px-1"><span>${d.left} <b>${d.val}%</b></span><span><b>${100 - d.val}%</b> ${d.right}</span></p>
+
                 </div>`;
+
         });
+
     }
+
+
 
     async function fetchOnlineData() {
+
         if(SCRIPT_URL === "GANTI_DENGAN_URL_WEB_APP_SCRIPT_ANDA") {
+
             alert("Harap masukkan URL Google App Script Anda terlebih dahulu!");
+
             return;
+
         }
+
         toggleLoader(true, "Mengambil data respon siswa dari Cloud Sheets...");
+
         try {
+
             const res = await fetch(SCRIPT_URL);
+
             allRecords = await res.json();
+
             renderDashboardData();
+
         } catch(e) { alert("Gagal menyinkronkan data dari server. Pastikan URL Script benar."); }
+
         toggleLoader(false);
+
     }
+
+
 
     function renderDashboardData() {
+
         const data = allRecords;
+
         document.getElementById('dash-total').textContent = data.length;
+
         let extroCount = 0; const typeCounts = {};
+
         Object.keys(typeData).forEach(k => typeCounts[k] = 0);
 
+
+
         data.forEach(d => {
+
             if(d.tipe_kepribadian) {
+
                 if(d.tipe_kepribadian[0] === 'E') extroCount++;
+
                 typeCounts[d.tipe_kepribadian]++;
+
             }
+
         });
+
+
 
         document.getElementById('dash-extro').textContent = data.length ? Math.round((extroCount / data.length) * 100) + '%' : '0%';
+
         document.getElementById('dash-intro').textContent = data.length ? Math.round(((data.length - extroCount) / data.length) * 100) + '%' : '0%';
 
+
+
         const chart = document.getElementById('dash-chart'); chart.innerHTML = '';
+
         const max = Math.max(...Object.values(typeCounts), 1);
+
         Object.entries(typeCounts).sort((a,b) => b[1] - a[1]).forEach(([t, c]) => {
+
             if (c > 0 || data.length === 0) {
+
                 chart.innerHTML += `
+
                     <div class="flex items-center gap-2">
+
                         <span class="w-14 text-xs font-bold text-gray-700">${t}</span>
+
                         <div class="flex-1 bg-gray-100 rounded-full h-5 overflow-hidden border border-gray-200"><div class="h-full bg-gradient-to-r from-rose-500 to-orange-500 rounded-full" style="width:${data.length ? Math.round((c / max) * 100) : 0}%"></div></div>
+
                         <span class="text-xs w-12 text-right font-semibold text-gray-600">${c} siswa</span>
+
                     </div>`;
+
             }
+
         });
+
+
 
         const tbody = document.getElementById('dash-table'); tbody.innerHTML = '';
+
         if(data.length === 0) {
+
             tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-gray-400 italic">Belum ada respon siswa secara online.</td></tr>`;
+
             return;
+
         }
+
         data.forEach(d => {
+
             tbody.innerHTML += `
+
                 <tr class="border-t border-gray-100 hover:bg-slate-50 transition">
+
                     <td class="px-4 py-3 font-semibold text-gray-800">${d.nama||'-'}</td><td>${d.kelas||'-'}</td><td class="text-center">${d.nomor_absen||'-'}</td><td>${d.jenis_kelamin||'-'}</td>
+
                     <td><span class="bg-rose-100 text-rose-700 px-2 py-0.5 rounded-md font-bold text-xs border border-rose-200">${d.tipe_kepribadian||'-'}</span></td>
+
                     <td class="px-4 py-3 text-xs text-gray-500"><div><b>Hobi:</b> ${d.hobi}</div><div><b>Cita:</b> ${d.cita_cita}</div></td>
+
                     <td class="px-4 py-3 text-xs text-gray-400">${d.tanggal_pengisian||'-'}</td>
+
                 </tr>`;
+
         });
+
     }
+
+
 
     function exportToCSV() {
+
         if (allRecords.length === 0) { alert("Tidak ada data untuk diekspor!"); return; }
+
         let csvContent = "data:text/csv;charset=utf-8,Nama Lengkap,Kelas,Nomor Absen,Jenis Kelamin,Hobi,Cita-Cita,Tipe Kepribadian,Tanggal Pengisian\n";
+
         allRecords.forEach(r => { csvContent += `"${r.nama}","${r.kelas}","${r.nomor_absen}","${r.jenis_kelamin}","${r.hobi}","${r.cita_cita}","${r.tipe_kepribadian}","${r.tanggal_pengisian}"\n`; });
+
         const encodedUri = encodeURI(csvContent); const link = document.createElement("a"); link.setAttribute("href", encodedUri);
+
         link.setAttribute("download", `Data_Siswa_MBTI_${new Date().toLocaleDateString('id-ID')}.csv`); document.body.appendChild(link); link.click(); document.body.removeChild(link);
+
     }
 
+
+
     window.onload = function() { lucide.createIcons(); };
+
   </script>
+
 </body>
-</html>
+
+</html> 
+
