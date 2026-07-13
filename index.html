@@ -203,8 +203,7 @@
   <footer class="mt-auto py-4 text-center text-xs text-gray-400 no-print border-t border-gray-100">&copy; 2026 Kenali Dirimu – Pemetaan Karakter Siswa Baru. Cloud Connected via Netlify.</footer>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxwkbJGG_3XlEPmp-91rxZqtMpJQmn25OCvEoqOMrlLT-E_LfHVSvilhtJQSLncrvOG/exec";
-
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyXH0IMPNk0yg59vxvKEoS2C-3WqIKKURsqmfwGPsgTp3pOk4Fq_EUT1VB8w451LtS5/exec"
     const questions = [
         {d:'EI',q:'Saat istirahat jam pelajaran, saya lebih suka...',a:'Ngobrol dengan banyak teman di luar kelas',b:'Membaca buku atau bersantai di tempat yang tenang'},
         {d:'EI',q:'Saat mengerjakan proyek kelompok, peranku biasanya...',a:'Aktif memimpin jalannya diskusi dan presentasi',b:'Mengamati keadaan dan fokus mengerjakan bagian tugasku'},
@@ -325,30 +324,47 @@
         currentQ += dir; renderQuestion();
     }
 
-    async function finishQuiz() {
-        toggleLoader(true, "Mengirim data ke sistem cloud...");
-        const scores = {E:0, I:0, S:0, N:0, T:0, F:0, J:0, P:0};
-        questions.forEach((q, i) => { if (answers[i] === 'a') scores[q.d[0]]++; else scores[q.d[1]]++; });
-
-        const type = (scores.E >= scores.I ? 'E' : 'I') + (scores.S >= scores.N ? 'S' : 'N') + (scores.T >= scores.F ? 'T' : 'F') + (scores.J >= scores.P ? 'J' : 'P');
-        const pEI = Math.round((scores.E / 6) * 100), pSN = Math.round((scores.S / 6) * 100), pTF = Math.round((scores.T / 6) * 100), pJP = Math.round((scores.J / 6) * 100);
-
-        studentData.tipe_kepribadian = type;
-        studentData.persen_ei = pEI; studentData.persen_sn = pSN; studentData.persen_tf = pTF; studentData.persen_jp = pJP;
-        studentData.tanggal_pengisian = new Date().toLocaleString('id-ID');
-
-        saveToLocal(studentData);
-
-        try {
-            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(studentData) });
-        } catch(e) { 
-            console.error("Koneksi cloud gagal, dialihkan lokal browser.", e); 
-        }
+    async function fetchOnlineData() {
+        toggleLoader(true, "Mengambil data respon siswa dari Cloud Sheets...");
         
+        // Gunakan trik anti-cache agar data yang ditarik selalu yang paling baru di sheets
+        const cacheBuster = "?t=" + new Date().getTime();
+        
+        try {
+            const res = await fetch(SCRIPT_URL + cacheBuster, {
+                method: 'GET',
+                mode: 'cors', // Mode CORS diaktifkan karena server Apps Script sudah diizinkan
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+            
+            if (!res.ok) throw new Error("Respon server bermasalah");
+            
+            const rawData = await res.json();
+            
+            if (Array.isArray(rawData) && rawData.length > 0) {
+                // Simpan data asli dari cloud ke allRecords
+                allRecords = rawData;
+                
+                // Perbarui juga data di local storage perangkat ini agar tetap sinkron
+                localStorage.setItem('kuis_mbti_backup', JSON.stringify(allRecords));
+                
+                renderDashboardData();
+                alert("Sinkronisasi Cloud Berhasil! Terhubung penuh dengan Google Sheets.");
+            } else {
+                alert("Data di Google Sheets kosong atau format kolom belum sesuai.");
+            }
+        } catch(e) { 
+            console.error("Detail Eror Fetch:", e);
+            alert("Gagal memuat otomatis dari cloud karena pembatasan browser. Menampilkan data lokal saat ini. \n\nSolusi: Silakan klik tombol 'Buka Link JSON Data Mentah' untuk memicu data keluar."); 
+            
+            // Jika gagal karena jaringan, tetap muat data cadangan lokal yang ada
+            loadLocalRecords();
+            renderDashboardData();
+        }
         toggleLoader(false);
-        showResult(type, {ei: pEI, sn: pSN, tf: pTF, jp: pJP});
     }
-
     function showResult(type, pcts) {
         showView('result');
         document.getElementById('res-nama').textContent = studentData.nama + ` (${studentData.kelas} / Absen ${studentData.nomor_absen})`;
