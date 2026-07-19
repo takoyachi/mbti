@@ -43,6 +43,7 @@
     </div>
   </nav>
 
+  <!-- LANDING PAGE -->
   <div id="view-landing" class="view active">
     <header class="relative overflow-hidden bg-gradient-to-b from-rose-50 via-white to-transparent">
       <div class="max-w-5xl mx-auto px-4 py-12 md:py-20 flex flex-col md:flex-row items-center gap-8">
@@ -94,6 +95,11 @@
               <option value="">Pilih...</option><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option>
             </select>
           </div>
+          <!-- INPUT BARU: NOMOR HP ORANG TUA / WALI -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="inp-telpOrtu">Nomor HP Orang Tua / Wali Murid</label>
+            <input id="inp-telpOrtu" type="tel" pattern="[0-9]{9,15}" required placeholder="Contoh: 081234567890" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-rose-400 outline-none">
+          </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1" for="inp-hobi">Hobi</label>
             <input id="inp-hobi" type="text" required placeholder="Contoh: Membaca, Olahraga, Coding" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-rose-400 outline-none">
@@ -108,6 +114,7 @@
     </section>
   </div>
 
+  <!-- QUIZ SECTION -->
   <div id="view-quiz" class="view">
     <div class="max-w-2xl mx-auto px-4 py-8">
       <div class="mb-6">
@@ -127,6 +134,7 @@
     </div>
   </div>
 
+  <!-- RESULT SECTION -->
   <div id="view-result" class="view">
     <div class="max-w-3xl mx-auto px-4 py-8" id="result-content">
       <div class="text-center mb-8 fade-in">
@@ -154,6 +162,7 @@
     </div>
   </div>
 
+  <!-- DASHBOARD GURU -->
   <div id="view-dashboard" class="view">
     <div class="max-w-6xl mx-auto px-4 py-8">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
@@ -187,6 +196,7 @@
                 <th class="px-4 py-3 text-left">Kelas</th>
                 <th class="px-4 py-3 text-left">No. Absen</th>
                 <th class="px-4 py-3 text-left">L/P</th>
+                <th class="px-4 py-3 text-left">No. HP Orang Tua</th>
                 <th class="px-4 py-3 text-left">Tipe Kepribadian</th>
                 <th class="px-4 py-3 text-left">Hobi / Cita-cita</th>
                 <th class="px-4 py-3 text-left">Tanggal Pengisian</th>
@@ -204,7 +214,6 @@
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykSuz0tlsC8HdfIdmm4z1sKXfB0fEv9D_7LibcUWdXabSTLBq-wALBs6XPfz5TTRBf/exec";
-
     const questions = [
         {d:'EI',q:'Saat istirahat jam pelajaran, saya lebih suka...',a:'Ngobrol dengan banyak teman di luar kelas',b:'Membaca buku atau bersantai di tempat yang tenang'},
         {d:'EI',q:'Saat mengerjakan proyek kelompok, peranku biasanya...',a:'Aktif memimpin jalannya diskusi dan presentasi',b:'Mengamati keadaan dan fokus mengerjakan bagian tugasku'},
@@ -233,7 +242,7 @@
     ];
 
     const typeData = {
-        ISTJ:{name:'Si Inspektur (Realistis & Tertata)',desc:'Bertanggung jawab, teliti, dan sangat dapat diandalkan. Menyukai keteraturan, hukum tertulis, dan konsistensi.',learn:'Belajar terstruktur dengan instruksi yang jelas, catatan yang rapi, dan jadwal teratur.',comm:'Sampaikan tugas dengan urutan logis, to-the-point, dan hargai ketepatwaktuan mereka.',strength:'Kedisiplinan tinggi, focus detail, manajemen waktu yang baik.',ekskul:'Pramuka, Paskibra, OSIS, atau Klub Sains/KIR.'},
+        ISTJ:{name:'Si Inspektur (Realistis & Tertata)',desc:'Bertanggung jawab, teliti, dan sangat dapat diandalkan. Menyukai keteraturan, hukum tertulis, dan konsistensi.',learn:'Belajar terstruktur dengan instruksi yang jelas, catatan yang rapi, dan jadwal teratur.',comm:'Sampaikan tugas dengan urutan logis, to-the-point, dan hargai ketepatwaktuan mereka.',strength:'Kedisiplinan tinggi, fokus detail, manajemen waktu yang baik.',ekskul:'Pramuka, Paskibra, OSIS, atau Klub Sains/KIR.'},
         ISFJ:{name:'Si Pelindung (Setia & Penuh Perhatian)',desc:'Setia, penuh perhatian, hangat, dan penolong. Selalu memastikan harmoni kelas terjaga.',learn:'Belajar tenang, menggunakan contoh visual nyata, serta review bertahap tanpa paksaan.',comm:'Berikan apresiasi tulus secara personal, gunakan bahasa yang lembut, dan hindari bentakan.',strength:'Empati tinggi, ketelatenan luar biasa, pendengar baik.',ekskul:'PMR, Kesenian, Koperasi Siswa.'},
         INFJ:{name:'Si Penasihat (Idealis & Visioner)',desc:'Idealis, penuh komitmen, visioner, dan memiliki empati mendalam. Mampu membaca potensi tersembunyi teman.',learn:'Belajar dengan pemahaman konsep besar, mengaitkan teori dengan nilai kemanusiaan.',comm:'Dengarkan ide abstrak mereka, beri ruang eksplorasi, hargai privasinya.',strength:'Kreativitas pemikiran, integritas moral, kemampuan konseling teman.',ekskul:'Jurnalistik, Teater/Sastra.'},
         INTJ:{name:'Si Arsitek (Strategis & Konseptual)',desc:'Pemikir strategis, mandiri, logis, dan analitis tingkat tinggi. Punya standar tinggi terhadap kompetensi.',learn:'Belajar mandiri dengan tantangan pemecahan studi kasus yang rumit dan akses literasi luas.',comm:'Hormati kemandirian logisnya. Jangan mikro-manajemen tugasnya, cukup beri target akhir.',strength:'Analisa tajam, kemandirian tinggi, inovasi efisiensi proses.',ekskul:'Robotik, Coding Club, Komunitas Catur.'},
@@ -269,6 +278,7 @@
         if (name === 'dashboard') {
             loadLocalRecords();
             renderDashboardData();
+            fetchOnlineData();
         }
     }
 
@@ -279,6 +289,7 @@
             kelas: document.getElementById('inp-kelas').value,
             nomor_absen: document.getElementById('inp-absen').value.trim(),
             jenis_kelamin: document.getElementById('inp-jk').value,
+            nomor_ortu: document.getElementById('inp-telpOrtu').value.trim(),
             hobi: document.getElementById('inp-hobi').value.trim(),
             cita_cita: document.getElementById('inp-cita').value.trim()
         };
@@ -309,7 +320,6 @@
         document.getElementById('btn-prev').disabled = currentQ === 0;
         const nextBtn = document.getElementById('btn-next');
         
-        // PENGATURAN KLIK TOMBOL NAVIGASI / KIRIM YANG BENAR
         if (currentQ === 23) { 
             nextBtn.innerHTML = 'Kirim & Lihat Hasil <i data-lucide="send" class="w-4 h-4 inline"></i>'; 
             nextBtn.disabled = answers[currentQ] === null;
@@ -417,33 +427,41 @@
         window.open(SCRIPT_URL, '_blank');
     }
 
+    // AMBIL DATA SECARA AMAN DENGAN EKSTENSI JSONP TAG ANTI-BLOKIR BROWSER
     async function fetchOnlineData() {
-        toggleLoader(true, "Mengambil data respon siswa dari Cloud Sheets...");
-        const cacheBuster = "?t=" + new Date().getTime();
-        try {
-            const res = await fetch(SCRIPT_URL + cacheBuster, {
-                method: 'GET',
-                mode: 'cors',
-                headers: { 'Accept': 'application/json' }
-            });
-            if (!res.ok) throw new Error("Respon server bermasalah");
-            const rawData = await res.json();
-            
+        toggleLoader(true, "Menghubungkan ke Cloud Sheets...");
+        
+        const oldScript = document.getElementById('jsonp-script');
+        if(oldScript) oldScript.remove();
+        
+        const callbackName = 'handleGoogleSheetsResponse';
+        
+        window[callbackName] = function(rawData) {
+            toggleLoader(false);
             if (Array.isArray(rawData) && rawData.length > 0) {
                 allRecords = rawData;
                 localStorage.setItem('kuis_mbti_backup', JSON.stringify(allRecords));
                 renderDashboardData();
-                alert("Sinkronisasi cloud berhasil! Data terbaru telah dimuat.");
+                alert("Sinkronisasi Sukses! Seluruh data terbaru berhasil ditarik.");
             } else {
-                alert("Data cloud kosong atau format tidak sesuai.");
+                alert("Data cloud berhasil terhubung, namun sheet masih kosong.");
             }
-        } catch(e) { 
-            console.error("Detail Eror Fetch:", e);
-            alert("Gagal memuat otomatis dari cloud karena pembatasan browser. Menampilkan data lokal saat ini."); 
+            delete window[callbackName];
+        };
+
+        const finalUrl = SCRIPT_URL + "?callback=" + callbackName + "&t=" + new Date().getTime();
+        
+        const script = document.createElement('script');
+        script.id = 'jsonp-script';
+        script.src = finalUrl;
+        script.onerror = function() {
+            toggleLoader(false);
+            alert("Gagal memuat otomatis dari cloud karena pembatasan browser. Menampilkan data cadangan lokal.");
             loadLocalRecords();
             renderDashboardData();
-        }
-        toggleLoader(false);
+        };
+        
+        document.body.appendChild(script);
     }
 
     function renderDashboardData() {
@@ -490,7 +508,7 @@
 
         const tbody = document.getElementById('dash-table'); tbody.innerHTML = '';
         if(data.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" class="px-4 py-8 text-center text-gray-400 italic">Belum ada respon data siswa yang terekam.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="9" class="px-4 py-8 text-center text-gray-400 italic">Belum ada respon data siswa yang terekam.</td></tr>`;
             return;
         }
         
@@ -501,6 +519,7 @@
                     <td>${d.kelas||'-'}</td>
                     <td class="text-center">${d.nomor_absen||'-'}</td>
                     <td>${d.jenis_kelamin||'-'}</td>
+                    <td class="text-rose-700 font-medium">${d.nomor_ortu||'-'}</td>
                     <td><span class="bg-rose-100 text-rose-700 px-2 py-0.5 rounded-md font-bold text-xs border border-rose-200">${d.tipe_kepribadian||'-'}</span></td>
                     <td class="px-4 py-3 text-xs text-gray-500"><div><b>Hobi:</b> ${d.hobi||'-'}</div><div><b>Cita:</b> ${d.cita_cita||'-'}</div></td>
                     <td class="px-4 py-3 text-xs text-gray-400">${d.tanggal_pengisian||'-'}</td>
@@ -516,31 +535,18 @@
 
     function exportToCSV() {
         if (allRecords.length === 0) { alert("Tidak ada data untuk diekspor!"); return; }
-        let csvContent = "data:text/csv;charset=utf-8,Nama Lengkap,Kelas,Nomor Absen,Jenis Kelamin,Hobi,Cita-Cita,Tipe Kepribadian,Tanggal Pengisian\n";
-        allRecords.forEach(r => { csvContent += `"${r.nama}","${r.kelas}","${r.nomor_absen}","${r.jenis_kelamin}","${r.hobi}","${r.cita_cita}","${r.tipe_kepribadian}","${r.tanggal_pengisian}"\n`; });
+        let csvContent = "data:text/csv;charset=utf-8,Nama Lengkap,Kelas,Nomor Absen,Jenis Kelamin,No HP Orang Tua,Hobi,Cita-Cita,Tipe Kepribadian,Tanggal Pengisian\n";
+        allRecords.forEach(r => { csvContent += `"${r.nama}","${r.kelas}","${r.nomor_absen}","${r.jenis_kelamin}","${r.nomor_ortu}","${r.hobi}","${r.cita_cita}","${r.tipe_kepribadian}","${r.tanggal_pengisian}"\n`; });
         const encodedUri = encodeURI(csvContent); const link = document.createElement("a"); link.setAttribute("href", encodedUri);
         link.setAttribute("download", `Data_Siswa_MBTI_${new Date().toLocaleDateString('id-ID')}.csv`); document.body.appendChild(link); link.click(); document.body.removeChild(link);
     }
 
-function toggleLoader(show, text = "Memproses...") {
-    const overlay = document.getElementById("loading-overlay");
-    const loadingText = document.getElementById("loading-text");
-
-    if (loadingText) {
-        loadingText.textContent = text;
+    function toggleLoader(show, text="Memproses...") {
+        const overlay = document.getElementById('loading-overlay');
+        document.getElementById('loading-text').textContent = text;
+        if(show) overlay.classList.remove('hidden'); else overlay.classList.add('hidden');
     }
 
-    if (overlay) {
-        if (show) {
-            overlay.classList.remove("hidden");
-            overlay.classList.add("flex");
-        } else {
-            overlay.classList.add("hidden");
-            overlay.classList.remove("flex");
-        }
-    }
-}
-    
     window.onload = function() { 
         loadLocalRecords();
         lucide.createIcons(); 
